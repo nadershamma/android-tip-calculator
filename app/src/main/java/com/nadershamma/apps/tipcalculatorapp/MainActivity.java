@@ -8,9 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 //Android UI Classes
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Button;
 
 //Android UI event handler
 import android.text.Editable;
@@ -18,9 +21,11 @@ import android.text.Editable;
 // Android UI event listener
 import android.text.TextWatcher;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.view.View.OnClickListener;
 
 // Number formatting
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,11 +38,15 @@ public class MainActivity extends AppCompatActivity {
     private TextView percentTextView;
     private TextView tipTextView;
     private TextView totalTextView;
+    private ViewGroup mainView;
+    private ArrayList<Button> buttons = new ArrayList<Button>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mainView = findViewById(R.id.mainLayout);
 
         //Get the GUI text widgets
         amountTextView = findViewById(R.id.amountEditText);
@@ -50,6 +59,16 @@ public class MainActivity extends AppCompatActivity {
         amountTextView.addTextChangedListener(amountEditTextWatcher);
         SeekBar percentSeekBar = findViewById(R.id.percentSeekBar);
         percentSeekBar.setOnSeekBarChangeListener(seekBarListener);
+
+        for (int i = 0; i < mainView.getChildCount(); i++) {
+            if (mainView.getChildAt(i) instanceof Button) {
+                buttons.add((Button) mainView.getChildAt(i));
+            }
+        }
+
+        for (Button button:buttons ) {
+            button.setOnClickListener(buttonPressed);
+        }
     }
 
     private void calculate() {
@@ -66,6 +85,14 @@ public class MainActivity extends AppCompatActivity {
         tipTextView.setText(currencyFormat.format(0));
         totalTextView.setText(currencyFormat.format(0));
     }
+
+    private final OnClickListener buttonPressed = new OnClickListener()  {
+        @Override
+        public void onClick(View view) {
+            Button b = (Button) view;
+            amountTextView.setText(b.getText().toString());
+        }
+    };
 
     private final OnSeekBarChangeListener seekBarListener = new OnSeekBarChangeListener() {
         @Override
@@ -96,8 +123,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 billAmount = Double.parseDouble(charSequence.toString());
                 calculate();
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 amountTextView.getText().clear();
                 billAmount = 0.0;
                 reset();
