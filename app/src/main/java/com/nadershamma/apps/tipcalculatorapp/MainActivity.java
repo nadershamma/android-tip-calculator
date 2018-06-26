@@ -86,38 +86,44 @@ public class MainActivity extends AppCompatActivity {
         totalTextView.setText(currencyFormat.format(0));
     }
 
+    private void updateInputView(String amount){
+        try {
+            userAmountInput.append(amount);
+            amountTextView.setText(userAmountInput.toString());
+            billAmount = Double.parseDouble(userAmountInput.toString());
+            calculate();
+        } catch (NumberFormatException e) {
+            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void deleteInput() {
+        userAmountInput.deleteCharAt(userAmountInput.length() - 1);
+        amountTextView.setText(userAmountInput.toString());
+        billAmount = Double.parseDouble(userAmountInput.toString());
+        calculate();
+    }
+
+    private void clearInput() {
+        userAmountInput.delete(0, userAmountInput.length());
+        amountTextView.setText("Enter Amount");
+        reset();
+    }
+
     private final OnClickListener buttonPressed = new OnClickListener() {
         @Override
         public void onClick(View view) {
             Button b = (Button) view;
-            Toast.makeText(getApplicationContext(), b.getText().toString(), Toast.LENGTH_SHORT).show();
             if (b.getText().toString().equalsIgnoreCase("DEL")) {
-                if(userAmountInput.length() > 1){
-                    userAmountInput.deleteCharAt(userAmountInput.length() -1);
-                    amountTextView.setText(userAmountInput.toString());
-                    calculate();
+                if (userAmountInput.length() > 1) {
+                    deleteInput();
+                } else {
+                    clearInput();
                 }
-                else{
-                    userAmountInput.delete(0, userAmountInput.length());
-                    amountTextView.setText("Enter Amount");
-                    reset();
-                }
-            }
-            else if(b.getText().toString().equalsIgnoreCase("CLR")){
-                userAmountInput.delete(0, userAmountInput.length());
-                amountTextView.setText("Enter Amount");
-                reset();
-            }
-            else{
-                try {
-                    userAmountInput.append(b.getText().toString());
-                    amountTextView.setText(userAmountInput.toString());
-                    billAmount = Double.parseDouble(userAmountInput.toString());
-                    calculate();
-                } catch (NumberFormatException e) {
-                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
-                }
-
+            } else if (b.getText().toString().equalsIgnoreCase("CLR")) {
+                clearInput();
+            } else {
+                updateInputView(b.getText().toString());
             }
         }
     };
