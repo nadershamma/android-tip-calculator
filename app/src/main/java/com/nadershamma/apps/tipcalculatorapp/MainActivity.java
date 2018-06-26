@@ -14,9 +14,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Button;
 
-//Android UI event handler
-import android.text.Editable;
-
 // Android UI event listener
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.view.View.OnClickListener;
@@ -71,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void calculate() {
+    private void calculateBill() {
         percentTextView.setText(percentFormat.format(percent));
 
         double tip = billAmount * percent;
@@ -81,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         totalTextView.setText(currencyFormat.format(total).toString());
     }
 
-    private void reset() {
+    private void resetBill() {
         tipTextView.setText(currencyFormat.format(0));
         totalTextView.setText(currencyFormat.format(0));
     }
@@ -91,23 +88,23 @@ public class MainActivity extends AppCompatActivity {
             userAmountInput.append(amount);
             amountTextView.setText(userAmountInput.toString());
             billAmount = Double.parseDouble(userAmountInput.toString());
-            calculate();
+            calculateBill();
         } catch (NumberFormatException e) {
             Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void deleteInput() {
+    private void deleteInputView() {
         userAmountInput.deleteCharAt(userAmountInput.length() - 1);
         amountTextView.setText(userAmountInput.toString());
         billAmount = Double.parseDouble(userAmountInput.toString());
-        calculate();
+        calculateBill();
     }
 
-    private void clearInput() {
+    private void clearInputView() {
         userAmountInput.delete(0, userAmountInput.length());
         amountTextView.setText("Enter Amount");
-        reset();
+        resetBill();
     }
 
     private final OnClickListener buttonPressed = new OnClickListener() {
@@ -116,12 +113,12 @@ public class MainActivity extends AppCompatActivity {
             Button b = (Button) view;
             if (b.getText().toString().equalsIgnoreCase("DEL")) {
                 if (userAmountInput.length() > 1) {
-                    deleteInput();
+                    deleteInputView();
                 } else {
-                    clearInput();
+                    clearInputView();
                 }
             } else if (b.getText().toString().equalsIgnoreCase("CLR")) {
-                clearInput();
+                clearInputView();
             } else {
                 updateInputView(b.getText().toString());
             }
@@ -132,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
             percent = progress / 100.0;
-            calculate();
+            calculateBill();
         }
 
         @Override
