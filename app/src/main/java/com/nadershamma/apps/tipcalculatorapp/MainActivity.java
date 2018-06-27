@@ -83,12 +83,25 @@ public class MainActivity extends AppCompatActivity {
         totalTextView.setText(currencyFormat.format(0));
     }
 
-    private void updateInputView(String amount){
+    private void updateInputView(String amount) {
         try {
             userAmountInput.append(amount);
-            amountTextView.setText(userAmountInput.toString());
-            billAmount = Double.parseDouble(userAmountInput.toString());
-            calculateBill();
+            if (userAmountInput.toString().matches("(\\d*)")) {
+                amountTextView.setText(userAmountInput.toString());
+                billAmount = Double.parseDouble(userAmountInput.toString());
+                calculateBill();
+            } else if (userAmountInput.toString().matches("(\\d*)(\\.?)")) {
+                amountTextView.setText(userAmountInput.toString());
+                billAmount = Double.parseDouble(userAmountInput.toString().replace(".", "").trim());
+                calculateBill();
+            } else if (userAmountInput.toString().matches("(\\d*)(\\.?)(\\d{0,2})")) {
+                amountTextView.setText(userAmountInput.toString());
+                billAmount = Double.parseDouble(userAmountInput.toString());
+                calculateBill();
+            } else {
+                Toast.makeText(getApplicationContext(), "Invalid Amount", Toast.LENGTH_SHORT).show();
+                deleteInputView();
+            }
         } catch (NumberFormatException e) {
             Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
         }
@@ -97,8 +110,10 @@ public class MainActivity extends AppCompatActivity {
     private void deleteInputView() {
         userAmountInput.deleteCharAt(userAmountInput.length() - 1);
         amountTextView.setText(userAmountInput.toString());
-        billAmount = Double.parseDouble(userAmountInput.toString());
-        calculateBill();
+        if (userAmountInput.toString().matches("(\\d*)(\\.?)(\\d{0,2})")) {
+            billAmount = Double.parseDouble(userAmountInput.toString());
+            calculateBill();
+        }
     }
 
     private void clearInputView() {
