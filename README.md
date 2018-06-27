@@ -47,7 +47,7 @@ OnSeekBarChangeListener interface was created and set to the app SeekBar.
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-// Getting the View Seekbar and assigning the seekBarListener
+// Getting the View SeekBar and assigning the seekBarListener
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private final OnSeekBarChangeListener seekBarListener = new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
-                percent = progress / 100.0;
-                calculateBill();
+                // Do stuff with the SeekBar
             }
     
             @Override
@@ -82,6 +81,55 @@ public class MainActivity extends AppCompatActivity {
     };
 }
 ```
-  
+## GUI Keyboard
+The GUI keyboard was built using Android widget buttons. In order to capture the values they hold 
+when the user presses the button an `onClick()` listener had to be assigned to each button. There
+are two ways to approach this, either hardcode each button or dynamically cycle through each child
+View of the Layout ViewGroup and assign the onClick() listener to each one. For this implementation 
+the latter option was chosen.  
 
+```Java
+// Other important imports
+import android.widget.Button;
+import android.view.View.OnClickListener;
+import java.util.ArrayList;
 
+// Getting the View Seekbar and assigning the seekBarListener
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        // [...]
+        private ArrayList<Button> buttons = new ArrayList<Button>();
+        
+        for (int i = 0; i < mainView.getChildCount(); i++) {
+                    if (mainView.getChildAt(i) instanceof Button) {
+                        buttons.add((Button) mainView.getChildAt(i));
+                    }
+                }
+        
+        for (Button button : buttons) {
+            button.setOnClickListener(buttonPressed);
+        }
+    }
+    
+    // [..]
+    
+    // Anonymous inner class
+    private final OnClickListener buttonPressed = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Button b = (Button) view;
+            // Do stuff with the button
+        }
+    };
+}
+```
+
+## User amount validation.
+The user amount was validated using regex to make sure that the input had no more than a single 
+`"."` and was a maximum of 2 decimal places. 
+
+`userAmountInput.toString().matches("(\\d*)(\\.?)(\\d{0,2})")` 
